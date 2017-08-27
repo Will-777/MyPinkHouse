@@ -5,10 +5,11 @@ Requirement
     Plateform : Raspberry Pi
     Game : Minecraft Pi
     OS : Raspbian
-    Python : 2.7.9
+    tested with Python : 2.7.9
 
-    INPUT
-        Your list should con
+    URLs (alias Skel):
+     github.com/Will-777/MyPinkHouse 
+     https://mcpiaddict.wordpress.com/
 
     Date : 2017/8/26 
 
@@ -46,9 +47,12 @@ mc.postToChat("in a single command line ! Can we ?")
 air = 0
 grass = block.GRASS.id
 wool = block.WOOL.id
-wGold = block.GOLD_ORE.id
+#wGoldOre = block.GOLD_ORE.id
+wGold = block.GOLD_BLOCK.id
 wDiamond_Block = block.DIAMOND_BLOCK.id #   = Block(57)
+wExtraWhite = 155 # block.???.id = 155, white color (parameter 0*normal,1*hierogliph ,2*lines),
 
+# Flowers and other decoration
 wFlower_Yellow = block.FLOWER_YELLOW.id #   = Block(37)
 wFlower_Cyan = block.FLOWER_CYAN.id     #   = Block(38)
 wMushroom_Red = block.MUSHROOM_RED.id   #   = Block(40)
@@ -78,8 +82,11 @@ wcrackedBrick = 2 # : Cracked stone brick
 # for windows
 wGlass = block.GLASS.id
 wGlass_Pane = block.GLASS_PANE.id
-# The door
-wDoorWood = block.DOOR_WOOD.id 
+wCobWeb = block.COBWEB.id # = Block(30)
+
+# The doors
+wDoorWood = block.DOOR_WOOD.id
+wDoorIron = block.DOOR_IRON.id
 
 bWater = block.WATER_STATIONARY.id
 
@@ -143,7 +150,9 @@ def ground(pos, mainColor= wPink, secondColor=wPurple):
 
 
 
-def makeTheHouse(pos, blockTypeMain = wool, blockTypeSecond = wool, mainColor=wMagenta , secondColor =wWhite):
+def makeTheHouse(pos, blockTypeMain= wool, blockTypeSecond= wool,
+                 mainColor= wMagenta, secondColor= wWhite,
+                 myDoor= wDoorWood):
     """
     thie function will make the main house building.
 
@@ -175,10 +184,10 @@ def makeTheHouse(pos, blockTypeMain = wool, blockTypeSecond = wool, mainColor=wM
             mc.setBlocks(pos.x+i[0], pos.y+i[1],pos.z+6+Front,
                      pos.x+i[0]-1, pos.y+i[1]+2, pos.z+6+Front, wGlass_Pane)
         # The door at Entrance
-        mc.setBlock(pos.x+1,   pos.y,   pos.z+6+Front, wDoorWood,4)
-        mc.setBlock(pos.x+1,   pos.y+1, pos.z+6+Front, wDoorWood,8)
-        mc.setBlock(pos.x+2,   pos.y,   pos.z+6+Front, wDoorWood,1)
-        mc.setBlock(pos.x+2,   pos.y+1, pos.z+6+Front, wDoorWood,8)
+        mc.setBlock(pos.x+1,   pos.y,   pos.z+6+Front, myDoor,4)
+        mc.setBlock(pos.x+1,   pos.y+1, pos.z+6+Front, myDoor,8)
+        mc.setBlock(pos.x+2,   pos.y,   pos.z+6+Front, myDoor,1)
+        mc.setBlock(pos.x+2,   pos.y+1, pos.z+6+Front, myDoor,8)
         
         # ************
         
@@ -253,7 +262,7 @@ def makeTheHouse(pos, blockTypeMain = wool, blockTypeSecond = wool, mainColor=wM
     #removeBlocks(pos.x-1, pos.y+2, pos.z+6, 2, 
     pass
 
-def theRoof(pos, mainColor=wPurple, replaceGlass = wGlass):
+def theRoof(pos, blockTypeMain = wool , mainColor=wPurple, replaceGlass = wGlass):
     """
     thie function will make the roof of the house.
 
@@ -275,17 +284,17 @@ def theRoof(pos, mainColor=wPurple, replaceGlass = wGlass):
            iy=11-i
         #print i, iy
         mc.setBlocks(pos.x-4+i, pos.y+10+iy, pos.z+4,
-                     pos.x-4+i, pos.y+10+iy, pos.z+29, wool, mainColor)
+                     pos.x-4+i, pos.y+10+iy, pos.z+29, blockTypeMain, mainColor)
 
     # RIGHT SIDE of the house
     for ii in range(0,3,1):
         mc.setBlocks(pos.x-5+ii, pos.y+9+ii, pos.z+5+ii,
-                     pos.x-13+ii, pos.y+9+ii, pos.z+29-ii, wool, mainColor)
+                     pos.x-13+ii, pos.y+9+ii, pos.z+29-ii, blockTypeMain, mainColor)
         #Remove the blocks
 
         material = air
         if ii >=2 :
-            material = wGlass
+            material = replaceGlass
         mc.setBlocks(pos.x-5+ii, pos.y+9+ii, pos.z+8,
                      pos.x-11+ii, pos.y+9+ii, pos.z+26-ii, material)
         
@@ -293,7 +302,7 @@ def theRoof(pos, mainColor=wPurple, replaceGlass = wGlass):
     xAdjust = 21
     for ii in range(0,3,1):
         mc.setBlocks(pos.x-5-ii+xAdjust, pos.y+9+ii, pos.z+5+ii,
-                     pos.x-13-ii+xAdjust, pos.y+9+ii, pos.z+29-ii, wool, mainColor)
+                     pos.x-13-ii+xAdjust, pos.y+9+ii, pos.z+29-ii, blockTypeMain, mainColor)
         #Remove the blocks
 
         material = air
@@ -367,16 +376,17 @@ def myBarbieHome(pos):
     """
     bulldozer(pos)
     ground(pos)
-    print mc.postToChat("Ground done !")
+    mc.postToChat("Ground done !")
 
     pos.z += 5
     makeTheHouse(pos)
-    print mc.postToChat("House done !")
+    mc.postToChat("House done !")
+
     theRoof(pos)
-    print mc.postToChat("Roof done !")
+    mc.postToChat("Roof done !")
 
     makeTheDeco(pos, flowers = wFlower_Cyan)
-    print mc.postToChat("ALL Work done !")
+    mc.postToChat("ALL Work done !")
 
 
 def addamsFamily(pos):
@@ -386,20 +396,49 @@ def addamsFamily(pos):
     
     """
     bulldozer(pos)
-    print mc.postToChat("We made some free place. done !")
+    mc.postToChat("We made some free place. done !")
     
     ground(pos, mainColor= wLightgrey, secondColor=wBlack)
     mc.setBlock(pos.x, pos.y, pos.z, 40)
     mc.setBlock(pos.x-1, pos.y, pos.z, 40)
-    print mc.postToChat("Ground done !")
+    mc.postToChat("Ground done !")
 
     pos.z += 5
     makeTheHouse(pos, blockTypeMain = wool, blockTypeSecond = wStone_Brick, mainColor=wBlack , secondColor =wcrackedBrick)
-    print mc.postToChat("House done !")
+    mc.postToChat("House done !")
     
-    theRoof(pos, mainColor=wBlack)
-    print mc.postToChat("The roof is done !")
+    theRoof(pos, blockTypeMain= wool , mainColor= wBlack, replaceGlass = wCobWeb)
+    mc.postToChat("The roof is done !")
 
     makeTheDeco(pos, flowers= wMushroom_Red)
-    print mc.postToChat("ALL Work done !")
+    mc.postToChat("ALL Work done !")
+
+    #END of Addams Familly's house.
+
+
+def uncleScrooge(pos):
+    """
+    Was your dream about Gold ?!
+    wGold = block.GOLD_ORE.id
+    wDiamond_Block 
+    """
+    bulldozer(pos)
+    #print mc.postToChat("We made some free place. done !")
+    mc.postToChat("We made some free place. done !")
     
+    ground(pos, mainColor= wWhite, secondColor=wBlack)
+    mc.setBlock(pos.x, pos.y, pos.z, 40)
+    mc.setBlock(pos.x-1, pos.y, pos.z, 40)
+    mc.postToChat("Ground done !")
+
+    pos.z += 5
+    makeTheHouse(pos, blockTypeMain = wExtraWhite, blockTypeSecond = wGold, mainColor=1 , secondColor=0, myDoor= wDoorIron)
+    mc.postToChat("House done !")
+    
+    theRoof(pos, blockTypeMain = wDiamond_Block, mainColor=wBlack)
+    mc.postToChat("The roof is done !")
+
+    makeTheDeco(pos, flowers = wFlower_Yellow)
+    mc.postToChat("ALL Work done !")
+
+    # Ends Uncle Scrooge House
